@@ -25,9 +25,9 @@ Designed as part of a senior firmware engineering challenge, this implementation
 | MMC5983     | SPI  | SPI Mode | Reads registers 0x02 through 0x09 |
 | LSM6DSM     | SPI  | SPI Mode | IMU sensor starting at 0x28       |
 
-Each read cycle extracts 2 bytes until 16 bytes are complete.
-Only first 8 bytes are valid for MMC5983. 9-16 are padded with zeros to maintain 16 byte structure for callback function.
-SPI sensors read only 1 byte from the data per cycle due to 2 byte/cycle transfer limitation.
+- Each read cycle extracts 2 bytes until 16 bytes are complete.
+- Only first 8 bytes are valid for MMC5983. 9-16 are padded with zeros to maintain 16 byte structure for callback function.
+- SPI sensors read only 1 byte from the data per cycle due to 2 byte/cycle transfer limitation.
 
 ---
 
