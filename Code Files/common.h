@@ -18,6 +18,7 @@
 #define LSM6DSM_OUT_XL   0x28
 
 #define SENSOR_DATA_SIZE 16         // Total bytes to read per sensor
+#define MMC5983_DATA_SIZE 8         // Sensor only reads 8 bytes total
 
 //Logging Macros
 #ifdef ENABLE_LOGGING

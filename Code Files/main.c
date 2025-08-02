@@ -1,11 +1,10 @@
 // src/main.c
-#include "ports.h"
-#include "timer.h"
-#include "common.h"
-
-// Callback stubs (provided externally)
-void (*device_inserted_removed_callback)(uint8_t port_num, bool device_inserted);
-void (*data_read_callback)(uint8_t port_num, uint8_t *data);
+#include "common.h"     // for LOG_INFO, SENSOR_DATA_SIZE, etc.
+#include "ports.h"      // for PortState, ports[], current_port
+#include "bus_lock.h"   // for acquire/release_semaphore
+#include "sensors.h"    // for start_*_data_read()
+#include "isr.h"        // for I2C_ISR/SPI_ISR prototypes
+#include "callbacks.h"  // for callback functions
 
 // `main()`
 int main() {

@@ -1,5 +1,10 @@
 // src/ports.c
-#include "ports.h"
+#include "common.h"     // for LOG_INFO, SENSOR_DATA_SIZE, etc.
+#include "ports.h"      // for PortState, ports[], current_port
+#include "bus_lock.h"   // for acquire/release_semaphore
+#include "sensors.h"    // for start_*_data_read()
+#include "isr.h"        // for I2C_ISR/SPI_ISR prototypes
+#include "callbacks.h"  // for callback functions
 
 volatile PortState ports[PORT_COUNT];
 volatile uint8_t current_port = 0;

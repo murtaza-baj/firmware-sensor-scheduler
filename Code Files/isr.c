@@ -1,22 +1,14 @@
 // src/isr.c
-#include "isr.h"
-#include "ports.h"
-#include "common.h"     
-#include "bus_lock.h"
+#include "common.h"     // for LOG_INFO, SENSOR_DATA_SIZE, etc.
+#include "ports.h"      // for PortState, ports[], current_port
+#include "bus_lock.h"   // for acquire/release_semaphore
+#include "sensors.h"    // for start_*_data_read()
+#include "isr.h"        // for I2C_ISR/SPI_ISR prototypes
+#include "callbacks.h"  // for callback functions
 
 static void read_success(void);
 static void read_failure(void);
 static void handle_read_complete(bool success);
-
-void I2C_ISR(bool success) {
-    release_semaphore(&i2c_semaphore);
-    handle_read_complete(success);
-}
-
-void SPI_ISR(bool success) {
-    release_semaphore(&spi_semaphore);
-    handle_read_complete(success);
-}
 
 static void read_success(void) {
     struct PortState *p = &ports[current_port];
@@ -26,7 +18,10 @@ static void read_success(void) {
     }
     p->timeout_counter = 0;
     if (p->type == SENSOR_MMC5983) {
-        p->byte_offset = (p->byte_offset + 2) % 8;                  //Sensor only gives 8 bytes worth of valid data
+        p->byte_offset = (p->byte_offset + 1) % MMC5983_DATA_SIZE;                  //Sensor only gives 8 bytes worth of valid data and only 1 byte of data is read per command
+    }
+    else if (p->type == SENSOR_LSM6DSM) {
+        p->byte_offset = (p->byte_offset + 1) % SENSOR_DATA_SIZE;                  //Sensor only gives 8 bytes worth of valid data and only 1 byte of data is read per command
     }
     else {
         p->byte_offset = (p->byte_offset + 2) % SENSOR_DATA_SIZE;
@@ -65,4 +60,14 @@ static void handle_read_complete(bool success) {
         read_failure();
     }
     p->prev_read_state = success;
+}
+
+void I2C_ISR(bool success) {
+    release_semaphore(&i2c_semaphore);
+    handle_read_complete(success);
+}
+
+void SPI_ISR(bool success) {
+    release_semaphore(&spi_semaphore);
+    handle_read_complete(success);
 }

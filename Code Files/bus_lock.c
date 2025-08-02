@@ -1,5 +1,10 @@
 // src/bus_lock.c
-#include "bus_lock.h"
+#include "common.h"     // for LOG_INFO, SENSOR_DATA_SIZE, etc.
+#include "ports.h"      // for PortState, ports[], current_port
+#include "bus_lock.h"   // for acquire/release_semaphore
+#include "sensors.h"    // for start_*_data_read()
+#include "isr.h"        // for I2C_ISR/SPI_ISR prototypes
+#include "callbacks.h"  // for callback functions
 
 // I2C and SPI semaphores (volatile for ISR safety)
 volatile semaphore_state_t i2c_semaphore = SEMAPHORE_FREE;
